@@ -5,8 +5,8 @@ from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
 
+''' Base Model Serializer for AuditTimestampModel columns'''
 class BaseModelSerializer(serializers.ModelSerializer):
-    ''' Base Model Serializer for AuditTimestampModel columns'''
     created_by_name = serializers.SerializerMethodField(read_only=True)
     updated_by_name = serializers.SerializerMethodField(read_only=True)
 
