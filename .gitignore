@@ -1,0 +1,114 @@
+#! Django specific files
+*.log
+*.pot
+*.pyc
+*.py[co]
+__pycache__/
+db.sqlite3
+db.sqlite3-journal
+
+#! Django migrations
+**/migrations! nvironment variables
+.env
+.env.*
+
+#! Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+.Python
+
+#! Compiled files
+*.so
+*.egg
+*.egg-info
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+
+#! Bytecode and System files
+*.dll
+*.dylib
+*.exe
+*.pdb
+*.zip
+*.tar.gz
+*.class
+
+#! Media and Static files
+media/
+staticfiles/
+
+#! IDE and editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+#! Coverage reports
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+
+#! MyPy and other static analysis tools
+.mypy_cache/
+.pyre/
+.pytype/
+.sorbet/
+.pyright/
+
+# Ignore local Docker files
+# docker-compose.override.yml
+# Dockerfile
+# Dockerfile.dev
+
+#! Node modules (if using npm/yarn)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+#! Secrets and Credentials
+secrets.json
+credentials.json
+*.pem
+*.key
+
+#! SQL dumps
+*.sql
+
+#! Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+
+#! JetBrains IDEs
+.idea/
+*.iml
+
+#! Jupyter notebooks checkpoints
+.ipynb_checkpoints
+
+#! Celery beat schedule file
+celerybeat-schedule
+celerybeat.pid
+
+#! for macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+#! Thumbnails
+._*
+
+# Files that might appear on external disk drives
+.Spotlight-V100
+.Trashes
