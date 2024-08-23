@@ -24,3 +24,5 @@ class BaseModelSerializer(serializers.ModelSerializer):
             return name
         return None
 
+class UserSerializers(BaseModelSerializer):
+    pass
