@@ -200,33 +200,7 @@ LOGGING = {
             'formatter': 'file',
             'delay': False
         },
-#         'file_administration': {
-#             'level': 'INFO',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': 'administration.log',
-#             'maxBytes': 10485760,   # 10 MB
-#             'backupCount': 2,
-#             'formatter': 'file',
-#             'delay': False
-#         },
-#         'file_asset_and_stock': {
-#             'level': 'INFO',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': 'asset_and_stock.log',
-#             'maxBytes': 10485760,   # 10 MB
-#             'backupCount': 2,
-#             'formatter': 'file',
-#             'delay': False
-#         },
-#         'file_user_authentication': {
-#             'level': 'INFO',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': 'user_authentication.log',
-#             'maxBytes': 10485760,   # 10 MB
-#             'backupCount': 2,
-#             'formatter': 'file',
-#             'delay': False
-#         },
+### NEXT FILE ##
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -244,16 +218,7 @@ LOGGING = {
             'handlers' :['file_auth'],
             'propagate' : True,
         },
-#         'administration': {
-#             'level': 'INFO',
-#             'handlers': ['file_administration'],
-#             'propagate': True,
-#         },
-#         'asset_and_stock': {
-#             'level': 'DEBUG',
-#             'handlers': ['file_asset_and_stock'],
-#             'propagate': True,
-#         },
+
         'user_details': {
             'level': 'DEBUG',
             'handlers': ['file_user_details'],
