@@ -25,5 +25,40 @@ class BaseModelSerializer(serializers.ModelSerializer):
         return None
 
 class UserSerializers(BaseModelSerializer):
-    pass
+    ''' User Serializers  '''
+    first_name = serializers.SerializerMethodField(read_only=True)
+    last_name = serializers.SerializerMethodField(read_only=True)
+    full_name = serializers.SerializerMethodField(read_only=True)
+    email = serializers.SerializerMethodField(read_only=True)
+    phone_no = serializers.SerializerMethodField(read_only=True)
+    password =  serializers.SerializerMethodField(read_only=True)
+    user_type_id = serializers.SerializerMethodField(read_only=True)
+    user_type =  serializers.SerializerMethodField(read_only=True)
+    user_control = serializers.SerializerMethodField(read_only=True)
+
+    def get_first_name(self,obj):
+        ''' get first name '''
+        try :
+            UserSerializers.get_first_name.first_name = None
+        except Exception as ex:
+            logger.info(ex)
+        return UserSerializers.get_first_name.first_name 
+  
+    def get_last_name(self,obj):
+        ''' get last name '''
+        try :
+            UserSerializers.get_last_name.last_name = None
+        except Exception as ex:
+            logger.info(ex)
+        return UserSerializers.get_last_name.last_name 
+        
+    def get_email(self,obj):
+        ''' get email name '''
+        try :
+            UserSerializers.get_email.email = None
+        except Exception as ex:
+            logger.info(ex)
+        return UserSerializers.get_email.email 
+
+
     
