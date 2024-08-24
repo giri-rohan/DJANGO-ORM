@@ -24,6 +24,13 @@ class BaseModelSerializer(serializers.ModelSerializer):
             return name
         return None
 
+class UserTypeSerializer(serializers.ModelSerializer):
+    ''' UserType Serializer '''
+    class Meta:
+        ''' Meta Class '''
+        model = UserType
+        fields = '__all__'
+
 class UserSerializers(BaseModelSerializer):
     ''' User Serializers  '''
     first_name = serializers.SerializerMethodField(read_only=True)
@@ -67,10 +74,10 @@ class UserSerializers(BaseModelSerializer):
         ''' get full name '''
         UserSerializers.get_full_name.full_name = None
         try :
-            UserSerializers.get_full_name.full_name = obj.user.get_full_name
+            UserSerializers.get_full_name.full_name = obj.user.get_full_name()
         except Exception as ex:
             logger.info(ex)
-        return UserSerializers.get_full_name() 
+        return UserSerializers.get_full_name.full_name 
 
     def get_phone_no(self,obj):
         ''' get phone no'''
@@ -90,4 +97,37 @@ class UserSerializers(BaseModelSerializer):
             logger.info(ex)
         return UserSerializers.get_user_type.user_type 
 
-    
+class SignUpSerializer(serializers.Serializer):
+    ''' Sign Up Serializer '''
+    username = serializers.CharField(
+        max_length=255, min_length=5, allow_blank=False)
+    password = serializers.CharField(
+        max_length=150, min_length=8, allow_blank=False)
+    # confirm_password = serializers.CharField(
+    #     max_length=150, min_length=8, allow_blank=False)
+    email = serializers.EmailField(
+        max_length=150, allow_blank=False)
+    first_name = serializers.CharField(
+        max_length=150, allow_blank=False)
+    last_name = serializers.CharField(
+        max_length=150, allow_blank=False)
+    phone = serializers.CharField(
+        max_length=150, min_length=8, allow_blank=False)
+    user_type = serializers.IntegerField()
+
+
+    def validate(self, data):
+        # Retrieve the password and confirm_password fields from the data
+        user_obj = User.objects.filter(username=data.get('username'))
+        if user_obj.exists():
+            raise ValidationError("User already exists")
+        if User.objects.filter(email=data.get('email')).exists():
+            raise ValidationError("User email already exists")
+
+        password = data.get('password')
+
+        # Check if the passwords < 8
+        if len(password) <= 8:
+            raise ValidationError("Passwords should be greater and equal 8 .")
+
+        return data    
