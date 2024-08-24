@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
-''' Audit Timestamp Models '''
+''' AuditTimestamp Models '''
 class AuditTimestampModel(models.Model):
     created_by = models.IntegerField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -17,7 +17,7 @@ class AuditTimestampModel(models.Model):
         ''' Meta Class '''
         abstract = True
 
-''' User Details Model '''
+''' UserType Model '''
 class UserType(AuditTimestampModel):   
     user_type_id = models.BigAutoField("UserTypeId", primary_key=True)
     user_type_name = models.CharField(
@@ -68,7 +68,7 @@ class User(AuditTimestampModel):
         full_name = f"{self.first_name} {self.last_name}"
         return full_name.strip()
 
-''' User Token Models '''
+''' UserToken Models '''
 class UserToken(models.Model):
     token_id = models.BigAutoField(primary_key=True)
     user_id = models.BigIntegerField(blank=False,null=True)
@@ -82,7 +82,7 @@ class UserToken(models.Model):
         managed = True
         db_table = 'user_token'
 
-''' User Type '''
+''' UserOtp Models '''
 class UserOtp(AuditTimestampModel):
     otp_id = models.BigAutoField(primary_key=True)
     u_phone = models.CharField(max_length=45, blank=True, null=True)
