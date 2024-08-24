@@ -61,6 +61,13 @@ class User(AuditTimestampModel):
     )
     password = models.CharField(max_length=255, null=True, blank=False)
 
+    def get_full_name(self):
+        """
+        Return the first_name plus the last_name, with a space in between.
+        """
+        full_name = f"{self.first_name} {self.last_name}"
+        return full_name.strip()
+
 ''' User Token Models '''
 class UserToken(models.Model):
     token_id = models.BigAutoField(primary_key=True)

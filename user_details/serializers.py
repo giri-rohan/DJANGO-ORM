@@ -26,3 +26,4 @@ class BaseModelSerializer(serializers.ModelSerializer):
 
 class UserSerializers(BaseModelSerializer):
     pass
+    
