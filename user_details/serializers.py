@@ -1,6 +1,6 @@
 import logging
 # from django.contrib.auth.models import User
-from user_details.models import User
+from user_details.models import User,UserType,UserOtp,UserToken
 from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
