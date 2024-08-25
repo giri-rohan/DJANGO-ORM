@@ -5,8 +5,9 @@ from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
 
-''' Base Model Serializer for AuditTimestampModel columns'''
+
 class BaseModelSerializer(serializers.ModelSerializer):
+    ''' Base Model Serializer for AuditTimestampModel columns '''
     created_by_name = serializers.SerializerMethodField(read_only=True)
     updated_by_name = serializers.SerializerMethodField(read_only=True)
 
@@ -129,5 +130,4 @@ class SignUpSerializer(serializers.Serializer):
         # Check if the passwords < 8
         if len(password) <= 8:
             raise ValidationError("Passwords should be greater and equal 8 .")
-
         return data    
