@@ -88,7 +88,7 @@ class CreateUser(APIView):
                 status=http_status
             )
 
-
+""" Error Serializers [need to improve]"""
 def serializer_error_format(error):
     ''' Serializer Error Format '''
     error_message = None
