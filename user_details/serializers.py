@@ -38,7 +38,7 @@ class UserSerializers(BaseModelSerializer):
     last_name = serializers.SerializerMethodField(read_only=True)
     full_name = serializers.SerializerMethodField(read_only=True)
     email = serializers.SerializerMethodField(read_only=True)
-    phone_no = serializers.SerializerMethodField(read_only=True)
+    phone_number = serializers.SerializerMethodField(read_only=True)
     # password =  serializers.SerializerMethodField(read_only=True)
     user_type_id = serializers.SerializerMethodField(read_only=True)
     user_type =  serializers.SerializerMethodField(read_only=True)
@@ -80,14 +80,15 @@ class UserSerializers(BaseModelSerializer):
             logger.info(ex)
         return UserSerializers.get_full_name.full_name 
 
-    def get_phone_no(self,obj):
+    def get_phone_number(self,obj):
         ''' get phone no'''
-        UserSerializers.get_phone_no.phone_no = None
+        UserSerializers.get_phone_number.phone_number = None
         try :
-            UserSerializers.get_phone_no.phone_no = obj.phone_no
+            UserSerializers.get_phone_number.phone_number = obj.phone_number
         except Exception as ex:
             logger.info(ex)
-        return UserSerializers.get_phone_no.phone_no 
+        return UserSerializers.get_phone_number.phone_number
+
     
     def get_user_type(self,obj):
         ''' get user type '''
@@ -100,8 +101,8 @@ class UserSerializers(BaseModelSerializer):
 
 class SignUpSerializer(serializers.Serializer):
     ''' Sign Up Serializer '''
-    username = serializers.CharField(
-        max_length=255, min_length=5, allow_blank=False)
+    # username = serializers.CharField(
+    #     max_length=255, min_length=5, allow_blank=False)
     password = serializers.CharField(
         max_length=150, min_length=8, allow_blank=False)
     # confirm_password = serializers.CharField(
@@ -112,22 +113,22 @@ class SignUpSerializer(serializers.Serializer):
         max_length=150, allow_blank=False)
     last_name = serializers.CharField(
         max_length=150, allow_blank=False)
-    phone = serializers.CharField(
+    phone_number = serializers.CharField(
         max_length=150, min_length=8, allow_blank=False)
     user_type = serializers.IntegerField()
 
 
     def validate(self, data):
         # Retrieve the password and confirm_password fields from the data
-        user_obj = User.objects.filter(username=data.get('username'))
-        if user_obj.exists():
-            raise ValidationError("User already exists")
+        # user_obj = User.objects.filter(username=data.get('username'))
+        # if user_obj.exists():
+        #     raise ValidationError("User already exists")
         if User.objects.filter(email=data.get('email')).exists():
             raise ValidationError("User email already exists")
 
         password = data.get('password')
 
         # Check if the passwords < 8
-        if len(password) <= 8:
+        if len(password) < 8:
             raise ValidationError("Passwords should be greater and equal 8 .")
         return data    
