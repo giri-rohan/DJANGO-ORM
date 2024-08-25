@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
     SignUpSerializer)
+from user_details.models import User
 from rest_framework.response import Response
 from rest_framework import status, filters
 from django.db import transaction
@@ -31,13 +32,14 @@ class CreateUser(APIView):
             serializer = SignUpSerializer(data=request_data)
             if serializer.is_valid():
                 user_data = {
-                    "phone_no": request_data['phone_no'],
+                    "phone_number": request_data['phone_number'],
                     "password": request_data['password'],
                     "first_name": request_data['first_name'],
                     "last_name": request_data['last_name'],
-                    "email": request_data['email']
+                    "email": request_data['email'],
+                    "user_type_id" : 1
                 }
-                user_instance = User.objects.create_user(**user_data)
+                user_instance = User.objects.create(**user_data)
                 logger.info("User Instance : %s", user_instance.id)
                 # user_details = {
                 #     "user": user_instance,
@@ -85,3 +87,15 @@ class CreateUser(APIView):
                 response,
                 status=http_status
             )
+
+
+def serializer_error_format(error):
+    ''' Serializer Error Format '''
+    error_message = None
+    if error.get('non_field_errors'):
+        error_message = error['non_field_errors'][0]
+    elif error.get('email'):
+        error_message = error['email'][0]
+    elif error.get('user_type'):
+        error_message = error['user_type'][0]
+    return error_message
