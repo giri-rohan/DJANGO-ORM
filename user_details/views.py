@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,12 +10,13 @@ from rest_framework import status, filters
 from django.db import transaction
 from django.db import connection
 # Create your views here.
+logger = logging.getLogger(__name__)
 
 
 
 class CreateUser(APIView):
     ''' Register User '''
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     @swagger_auto_schema(tags=['User'], operation_description="Create User", operation_summary="User Create", request_body=SignUpSerializer)
     @transaction.atomic
