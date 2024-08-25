@@ -4,7 +4,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
     SignUpSerializer)
-
+from rest_framework.response import Response
+from rest_framework import status, filters
+from django.db import transaction
+from django.db import connection
 # Create your views here.
 
 
