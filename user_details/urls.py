@@ -1,4 +1,4 @@
-''' User_details Views '''
+''' user_details Views URL'''
 from django.urls import path
 from .views import  CreateUser
 
