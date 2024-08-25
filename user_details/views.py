@@ -31,7 +31,7 @@ class CreateUser(APIView):
             serializer = SignUpSerializer(data=request_data)
             if serializer.is_valid():
                 user_data = {
-                    "username": request_data['username'],
+                    "phone_no": request_data['phone_no'],
                     "password": request_data['password'],
                     "first_name": request_data['first_name'],
                     "last_name": request_data['last_name'],
