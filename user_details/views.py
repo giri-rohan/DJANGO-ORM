@@ -14,7 +14,7 @@ from django.db import connection
 logger = logging.getLogger(__name__)
 
 
-
+''' Create User API '''
 class CreateUser(APIView):
     ''' Register User '''
     permission_classes = (AllowAny,)
