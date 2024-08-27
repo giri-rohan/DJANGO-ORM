@@ -136,7 +136,7 @@ class GenerateOtp(APIView):
 
 
 
-                # ### WORKS FINE ###
+                # ### PREVIOUS WORKS FINE ###
                 #     message = f"Hi {u_email}, your Generted Otp is {otp}."
                 #     msg = EmailMessage()
                 #     msg.set_content(message)
