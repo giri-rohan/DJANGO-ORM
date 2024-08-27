@@ -5,11 +5,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
     SignUpSerializer,GenerateOtpSerializer)
-from user_details.models import User
+from user_details.models import User,UserOtp
 from rest_framework.response import Response
 from rest_framework import status, filters
 from django.db import transaction
 from django.db import connection
+from django.utils import timezone
 # Create your views here.
 logger = logging.getLogger(__name__)
 
@@ -93,6 +94,20 @@ class GenerateOtp(APIView):
     @swagger_auto_schema(tags=['GenerateOtp'], operation_description="Generate Otp", operation_summary="Generate Otp Successfully", request_body=GenerateOtpSerializer)
     @transaction.atomic
     def post(self, request):
+        email = request.data.get('u_email')
+        logger.info(email)
+        
+        if User.objects.filter(email=email).exists():
+            return Response({'warning': 'User Already Exists'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if UserOtp.objects.filter(u_email=email).exists():
+            logger.info(f"found mail {email}")
+            user = UserOtp.objects.filter(u_email=email).order_by('-created_on').first()
+            current_time = timezone.now()
+            logger.info(f"Current time => {current_time}")
+            if user.expire_time >= current_time:
+                return Response({'warning': 'User OTP Generated After 10 minutes'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = GenerateOtpSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
