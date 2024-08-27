@@ -2,6 +2,8 @@ import logging
 # from django.contrib.auth.models import User
 from user_details.models import User,UserType,UserOtp,UserToken
 from rest_framework import serializers
+import random
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -132,3 +134,20 @@ class SignUpSerializer(serializers.Serializer):
         if len(password) < 8:
             raise ValidationError("Passwords should be greater and equal 8 .")
         return data    
+
+class GenerateOtpSerializer(serializers.Serializer):
+    u_email = serializers.EmailField()
+    
+    def create(self, validated_data):
+        u_email = validated_data['u_email']
+        otp = f"{random.randint(100000, 999999)}"
+        u_phone = "9999999999"
+        logger.info(otp)
+        expire_time = timezone.now() + timezone.timedelta(minutes=10)
+
+        UserOtp.objects.create(u_email=u_email,u_phone=u_phone,
+            otp=otp, expire_time=expire_time,
+        )
+
+        # TODO: Send OTP to user's email
+        return {"otp": otp}
