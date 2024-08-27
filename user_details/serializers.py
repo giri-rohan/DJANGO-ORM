@@ -137,7 +137,7 @@ class SignUpSerializer(serializers.Serializer):
 
 class GenerateOtpSerializer(serializers.Serializer):
     u_email = serializers.EmailField()
-    
+
     def create(self, validated_data):
         u_email = validated_data['u_email']
         otp = f"{random.randint(100000, 999999)}"
@@ -148,6 +148,4 @@ class GenerateOtpSerializer(serializers.Serializer):
         UserOtp.objects.create(u_email=u_email,u_phone=u_phone,
             otp=otp, expire_time=expire_time,
         )
-
-        # TODO: Send OTP to user's email
         return {"otp": otp}
