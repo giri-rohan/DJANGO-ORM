@@ -143,7 +143,7 @@ class GenerateOtpSerializer(serializers.Serializer):
         otp = f"{random.randint(100000, 999999)}"
         u_phone = "9999999999"
         logger.info(otp)
-        expire_time = timezone.now() + timezone.timedelta(minutes=10)
+        expire_time = timezone.now() + timezone.timedelta(minutes=1)
 
         UserOtp.objects.create(u_email=u_email,u_phone=u_phone,
             otp=otp, expire_time=expire_time,
