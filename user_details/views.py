@@ -11,6 +11,12 @@ from rest_framework import status, filters
 from django.db import transaction
 from django.db import connection
 from django.utils import timezone
+from django.conf import settings
+import smtplib
+from email.message import EmailMessage
+#new
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 logger = logging.getLogger(__name__)
 
@@ -95,8 +101,9 @@ class GenerateOtp(APIView):
     @transaction.atomic
     def post(self, request):
         email = request.data.get('u_email')
+        otp = None
         logger.info(email)
-        
+
         if User.objects.filter(email=email).exists():
             return Response({'warning': 'User Already Exists'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -110,7 +117,48 @@ class GenerateOtp(APIView):
 
         serializer = GenerateOtpSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            u_email = serializer.validated_data.get('u_email')
+            serializer_obj = serializer.save()
+            otp = serializer_obj['otp']
+            logger.info(f"Hi {u_email}, your Generted Otp is {otp}.")
+            try:
+
+                subject = 'Your OTP Code'
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = u_email
+                text_content = f"Hi {u_email}, your Generated OTP is {otp}."
+                html_content = render_to_string('signupotpgenerate.html', {'u_email': u_email, 'otp': otp})
+                
+                email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+                email.attach_alternative(html_content, "text/html")
+                email.send()
+
+
+
+
+                # ### WORKS FINE ###
+                #     message = f"Hi {u_email}, your Generted Otp is {otp}."
+                #     msg = EmailMessage()
+                #     msg.set_content(message)
+                #     msg['Subject'] = 'New User Creation'
+                #     msg['From'] = settings.DEFAULT_FROM_EMAIL
+                #     msg['To'] = u_email
+
+
+                
+                #     # Login
+                #     s = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+                #     s.starttls()
+                #     s.login(settings.EMAIL_HOST_USER,settings.EMAIL_HOST_PASSWORD)
+
+                #     # Sending the message
+                #     s.send_message(msg)
+                #     s.quit()
+                    ### WORKS FINE ###
+            except Exception as exp:
+                logger.exception("User Mail Sending Exception : %s", exp) 
+
+            
             return Response({'message': 'OTP generated and sent'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
