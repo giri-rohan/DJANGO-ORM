@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
-    SignUpSerializer)
+    SignUpSerializer,GenerateOtpSerializer)
 from user_details.models import User
 from rest_framework.response import Response
 from rest_framework import status, filters
@@ -87,6 +87,17 @@ class CreateUser(APIView):
                 response,
                 status=http_status
             )
+
+class GenerateOtp(APIView):
+    permission_classes = (AllowAny,)
+    @swagger_auto_schema(tags=['GenerateOtp'], operation_description="Generate Otp", operation_summary="Generate Otp Successfully", request_body=GenerateOtpSerializer)
+    @transaction.atomic
+    def post(self, request):
+        serializer = GenerateOtpSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'OTP generated and sent'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """ Error Serializers [need to improve]"""
 def serializer_error_format(error):
