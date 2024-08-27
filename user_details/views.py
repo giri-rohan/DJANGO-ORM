@@ -87,7 +87,7 @@ class CreateUser(APIView):
                 response,
                 status=http_status
             )
-
+''' Generate OTP API '''
 class GenerateOtp(APIView):
     permission_classes = (AllowAny,)
     @swagger_auto_schema(tags=['GenerateOtp'], operation_description="Generate Otp", operation_summary="Generate Otp Successfully", request_body=GenerateOtpSerializer)
