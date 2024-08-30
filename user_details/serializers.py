@@ -125,6 +125,7 @@ class SignUpSerializer(serializers.Serializer):
         # user_obj = User.objects.filter(username=data.get('username'))
         # if user_obj.exists():
         #     raise ValidationError("User already exists")
+        #!! NEED TO IMPROVE CONDITION YOU DB CALL IN VIEWS !!#
         if User.objects.filter(email=data.get('email')).exists():
             raise ValidationError("User email already exists")
 
@@ -149,3 +150,15 @@ class GenerateOtpSerializer(serializers.Serializer):
             otp=otp, expire_time=expire_time,
         )
         return {"otp": otp}
+
+class VerifyOtpSerializer(serializers.Serializer):
+    otp = serializers.IntegerField(required=True)
+    u_email = serializers.EmailField()
+
+    def validate(self,data):
+        user_otp = data.get('otp')
+        logger.info(f"LENGTH=> {user_otp}")
+        if user_otp < 100000 or user_otp > 999999:
+            raise serializers.ValidationError("OTP must be a 6-digit number.")
+        return data
+        
