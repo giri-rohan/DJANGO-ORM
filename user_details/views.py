@@ -172,7 +172,6 @@ class VerifyOtp(APIView):
         email = request.data.get('email')
         response = {}
         http_status = None
-        # if user_otp 
         logger.info(f"OTP IS {user_otp}")
         try:
             serializer = VerifyOtpSerializer(data=request.data, context={'request': request})
