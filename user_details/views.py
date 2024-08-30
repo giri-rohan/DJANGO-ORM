@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
-    SignUpSerializer,GenerateOtpSerializer)
+    SignUpSerializer,GenerateOtpSerializer,VerifyOtpSerializer)
 from user_details.models import User,UserOtp
 from rest_framework.response import Response
 from rest_framework import status, filters
@@ -162,7 +162,36 @@ class GenerateOtp(APIView):
             return Response({'message': 'OTP generated and sent'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-""" Error Serializers [need to improve]"""
+''' Verify OTP API '''
+class VerifyOtp(APIView):
+    permission_classes = (AllowAny,)
+    @swagger_auto_schema(tags=['GenerateOtp'], operation_description="Generate Otp", operation_summary="Generate Otp Successfully", request_body=VerifyOtpSerializer)
+    @transaction.atomic
+    def post(self,request):
+        # user_otp = request.data.get('otp')
+        # u_email = request.data.get('email')
+        # if user_otp 
+        logger.info(f"OTP IS {user_otp}")
+        serializer = VerifyOtpSerializer(data=request.data, context={'request': request})
+        u_mail = data.get('email')
+        user_otp = data.get('otp')
+        logger.info(user_otp)
+        if serializer.is_valid():
+            logger.info("=================")
+            if UserOtp.objects.filter(u_email=email,user_otp=otp).exists():
+                logger.info(f"IN Verify otp found mail {email}")
+                user = UserOtp.objects.filter(u_email=email).order_by('-created_on').first()
+                current_time = timezone.now()
+                logger.info(f"Current time => {current_time}")
+                if user.expire_time >= current_time:
+                   user.otp == user_otp
+
+
+
+            return Response({'message': 'VERIFIED'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+''' Error Serializers [need to improve] '''
 def serializer_error_format(error):
     ''' Serializer Error Format '''
     error_message = None
