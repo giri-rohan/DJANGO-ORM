@@ -144,7 +144,7 @@ class GenerateOtpSerializer(serializers.Serializer):
         otp = f"{random.randint(100000, 999999)}"
         u_phone = "9999999999"
         logger.info(otp)
-        expire_time = timezone.now() + timezone.timedelta(minutes=1)
+        expire_time = timezone.now() + timezone.timedelta(minutes=5)
 
         UserOtp.objects.create(u_email=u_email,u_phone=u_phone,
             otp=otp, expire_time=expire_time,
@@ -153,7 +153,7 @@ class GenerateOtpSerializer(serializers.Serializer):
 
 class VerifyOtpSerializer(serializers.Serializer):
     otp = serializers.IntegerField(required=True)
-    u_email = serializers.EmailField()
+    email = serializers.EmailField()
 
     def validate(self,data):
         user_otp = data.get('otp')
