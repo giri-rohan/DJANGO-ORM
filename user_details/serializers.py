@@ -152,6 +152,7 @@ class GenerateOtpSerializer(serializers.Serializer):
         return {"otp": otp}
 
 class VerifyOtpSerializer(serializers.Serializer):
+    ''' VerifyOtp Serializer '''
     otp = serializers.IntegerField(required=True)
     email = serializers.EmailField()
 
