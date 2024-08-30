@@ -168,29 +168,59 @@ class VerifyOtp(APIView):
     @swagger_auto_schema(tags=['GenerateOtp'], operation_description="Generate Otp", operation_summary="Generate Otp Successfully", request_body=VerifyOtpSerializer)
     @transaction.atomic
     def post(self,request):
-        # user_otp = request.data.get('otp')
-        # u_email = request.data.get('email')
+        user_otp = request.data.get('otp')
+        email = request.data.get('email')
+        response = {}
+        http_status = None
         # if user_otp 
         logger.info(f"OTP IS {user_otp}")
-        serializer = VerifyOtpSerializer(data=request.data, context={'request': request})
-        u_mail = data.get('email')
-        user_otp = data.get('otp')
-        logger.info(user_otp)
-        if serializer.is_valid():
-            logger.info("=================")
-            if UserOtp.objects.filter(u_email=email,user_otp=otp).exists():
-                logger.info(f"IN Verify otp found mail {email}")
+        try:
+            serializer = VerifyOtpSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                logger.info("=================")
                 user = UserOtp.objects.filter(u_email=email).order_by('-created_on').first()
+                logger.info(f"IN Verify otp found mail {email} OTP {user.otp}")
                 current_time = timezone.now()
                 logger.info(f"Current time => {current_time}")
-                if user.expire_time >= current_time:
-                   user.otp == user_otp
+                logger.info(f"expire time => {user.expire_time}")
+                if current_time > user.expire_time:
+                    logger.info(f"OTP EXPIRED ")
+                    # raise Exception("OTP Expired")
+                    response['errors'] = "OTP Expired"
+                    http_status = status.HTTP_400_BAD_REQUEST
+                    return Response( response, status=http_status)
+                elif str(user_otp) != str(user.otp):
+                    logger.info(f"user otp does not match")
+                    # raise Exception("OTP DID NOT MATCH")
+                    response['errors'] = "OTP DOES NOT MATCH"
+                    http_status = status.HTTP_400_BAD_REQUEST
+                    return Response(response, status=http_status)
+                   
 
+                    # return Response( response, status=http_status)
+            
+            
+                else:
+                    response = {'message': 'VERIFIED'}
+                    http_status = status.HTTP_200_OK
+                    return Response(response, status=http_status)
+                      
 
+            
+              
 
-            return Response({'message': 'VERIFIED'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Exception as exp:
+            logger.exception("User Create Exception : %s", exp)
+            response['errors'] = "Server Error"
+            http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response(
+                response,
+                status=http_status
+            )
 
+        
 ''' Error Serializers [need to improve] '''
 def serializer_error_format(error):
     ''' Serializer Error Format '''
@@ -199,6 +229,8 @@ def serializer_error_format(error):
         error_message = error['non_field_errors'][0]
     elif error.get('email'):
         error_message = error['email'][0]
+    elif error.get('otp'):
+        error_message = error['otp Expired'][0]
     elif error.get('user_type'):
         error_message = error['user_type'][0]
     return error_message
