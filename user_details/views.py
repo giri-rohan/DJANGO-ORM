@@ -185,32 +185,19 @@ class VerifyOtp(APIView):
                 logger.info(f"expire time => {user.expire_time}")
                 if current_time > user.expire_time:
                     logger.info(f"OTP EXPIRED ")
-                    # raise Exception("OTP Expired")
                     response['errors'] = "OTP Expired"
                     http_status = status.HTTP_400_BAD_REQUEST
                     return Response( response, status=http_status)
                 elif str(user_otp) != str(user.otp):
                     logger.info(f"user otp does not match")
-                    # raise Exception("OTP DID NOT MATCH")
                     response['errors'] = "OTP DOES NOT MATCH"
                     http_status = status.HTTP_400_BAD_REQUEST
                     return Response(response, status=http_status)
-                   
-
-                    # return Response( response, status=http_status)
-            
-            
                 else:
                     response = {'message': 'VERIFIED'}
                     http_status = status.HTTP_200_OK
                     return Response(response, status=http_status)
-                      
-
-            
-              
-
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
         except Exception as exp:
             logger.exception("User Create Exception : %s", exp)
             response['errors'] = "Server Error"
