@@ -4,6 +4,7 @@ from user_details.models import User,UserType,UserOtp,UserToken
 from rest_framework import serializers
 import random
 from django.utils import timezone
+ 
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +155,7 @@ class GenerateOtpSerializer(serializers.Serializer):
 class VerifyOtpSerializer(serializers.Serializer):
     ''' VerifyOtp Serializer '''
     otp = serializers.IntegerField(required=True)
-    email = serializers.EmailField()
+    email = serializers.EmailField(required=True)
 
     def validate(self,data):
         user_otp = data.get('otp')
@@ -162,4 +163,40 @@ class VerifyOtpSerializer(serializers.Serializer):
         if user_otp < 100000 or user_otp > 999999:
             raise serializers.ValidationError("OTP must be a 6-digit number.")
         return data
+        
+class LogInSerializer(serializers.Serializer):
+    ''' LogIn Serializers '''
+    email = serializers.EmailField(required=True)
+    otp = serializers.IntegerField(write_only=True)
+    password = serializers.CharField(min_length=8,write_only=True)
+
+    def validate(self,data):
+        email = data.get('email')
+        user_otp = data.get('otp')
+        password= data.get('password')
+
+        if email in (None," "):
+            raise serializers.ValidationError("Email id Requied!!")
+        
+        if not (user_otp or password):
+            raise serializers.ValidationError("Either OTP Or Password Is Required")
+        
+        if password:
+            # user = authenticate(username=username, password=password)
+            if email is None:
+                raise serializers.ValidationError("Invalid password.")
+        
+        # if otp:
+        #     valid_otp = UserOtp.objects.filter(user=user, otp=otp).exists()
+        #     if not valid_otp:
+        #         raise serializers.ValidationError("Invalid OTP.")
+
+        return {'user': email}
+
+class HealthSerializer(serializers.Serializer):
+    test = serializers.IntegerField(write_only=True)
+    
+
+        
+
         
