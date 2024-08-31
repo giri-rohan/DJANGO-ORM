@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from user_details.serializers import (
-    SignUpSerializer,GenerateOtpSerializer,VerifyOtpSerializer)
+    SignUpSerializer,GenerateOtpSerializer,VerifyOtpSerializer,LogInSerializer,HealthSerializer)
 from user_details.models import User,UserOtp
 from rest_framework.response import Response
 from rest_framework import status, filters
@@ -14,6 +14,8 @@ from django.utils import timezone
 from django.conf import settings
 import smtplib
 from email.message import EmailMessage
+from user_authentication.authMiddleware import AuthMiddleware
+from user_authentication.utils import generaterefreshtoken,generatenewtoken
 #new
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -161,7 +163,6 @@ class GenerateOtp(APIView):
             
             return Response({'message': 'OTP generated and sent'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 ''' Verify OTP API '''
 class VerifyOtp(APIView):
     permission_classes = (AllowAny,)
@@ -205,8 +206,69 @@ class VerifyOtp(APIView):
                 response,
                 status=http_status
             )
+''' LogIn User '''
+class LoginUser(APIView):
+    permission_classes = (AllowAny,)
+    @swagger_auto_schema(tags=['LogIn'], operation_description="Log In", operation_summary="Log In Successfully", request_body=LogInSerializer)
+    @transaction.atomic
+    def post(self,request):
+        user_otp = request.data.get('otp')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        response = {}
+        http_status = None
+        logger.info(f"password IS {password} mail is {email}")
+        try:
+            serializer = LogInSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                logger.info("=================")
+                user = User.objects.get(email=email)
+                if user.password == password:
+                    logger.info(f"password = {user.password}")
+                    
+                    token_response = generatenewtoken(user.id,user.user_type_id,user.first_name,user.last_name,user.email,user.phone_number)
+                    http_status = status.HTTP_200_OK
+                    logger.info(token_response)
+                    response = {'message': 'Log In Successfully' ,'TOKEN' : token_response}
+                    # Token = {}
+                    return Response(response,status=http_status)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as exp:
+            logger.exception("User Create Exception : %s", exp)
+            response['errors'] = "Server Error"
+            http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response(
+                response,
+                status=http_status
+            )
 
-        
+class Health(APIView):
+    permission_classes = (AllowAny,)
+    @swagger_auto_schema(tags=['Health'], operation_description="Health", operation_summary="Health is Running", request_body=HealthSerializer)
+    @transaction.atomic
+    def post(self,request):
+        test = request.data.get('test')
+
+        response = {}
+        http_status = None
+        try:
+            serializer = HealthSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                logger.info("=================")
+                
+                response = {'message': 'Health Is Running Successfully'}
+                    # Token = {}
+                return Response(response,status=http_status)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as exp:
+            logger.exception("User Create Exception : %s", exp)
+            response['errors'] = "Server Error"
+            http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response(
+                response,
+                status=http_status
+            )
+
 ''' Error Serializers [need to improve] '''
 def serializer_error_format(error):
     ''' Serializer Error Format '''
