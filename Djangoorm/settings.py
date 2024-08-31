@@ -49,8 +49,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    # 'authentication'
     'user_details',
+    'user_authentication'
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -90,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'user_authentication.authMiddleware.AuthMiddleware',
 ]
 
 ROOT_URLCONF = 'Djangoorm.urls'
@@ -213,7 +214,7 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': True
         },
-        'JWTauth' : {
+        'user_authentication' : {
             'level' : 'DEBUG',
             'handlers' :['file_auth'],
             'propagate' : True,
@@ -227,6 +228,13 @@ LOGGING = {
     }
 }
 
+
+#JWT
+import os
+JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRE_MINUTES', 60))
+JWT_REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv('JWT_REFRESH_TOKEN_EXPIRE_DAYS', 7))
 
 # EMAIL_HOST_PASSWORD='3VadFygDOWhEsZGH'
 # EMAIL_HOST_USER='7b0998001@smtp-brevo.com'
