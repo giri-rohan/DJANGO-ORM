@@ -188,9 +188,11 @@ def generatenewtoken(id, user_type, first_name, last_name, email, phone):
             }
             logger.info(new_payload)
             secret_key = str(settings.JWT_SECRET_KEY)
+            algorithm = str(settings.JWT_ALGORITHM)
+            logger.info(algorithm)
+            # algorithm = 'HS256'
 
             # Ensure algorithm is a string
-            algorithm = "HS256"
 
             # Encode new JWT token
             jwt_token = jwt.encode(payload=new_payload, key=secret_key, algorithm=algorithm)

@@ -284,8 +284,8 @@ class AuthMiddleware(BaseBackend):
                 logger.info(f"Token received from client: {token}")
 
                 secret_key = str(settings.JWT_SECRET_KEY)
-                algorithm = "HS256"
-                payload = jwt.decode(token, key=secret_key, algorithms=[algorithm])
+                algorithm = str(settings.JWT_ALGORITHM)
+                payload = jwt.decode(token, key=secret_key, algorithm=algorithm)
                 logger.info(f"Token Decode Response: {payload}")
 
                 user_id = payload.get('user_id')
