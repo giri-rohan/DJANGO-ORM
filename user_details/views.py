@@ -242,32 +242,75 @@ class LoginUser(APIView):
                 status=http_status
             )
 
+# class Health(APIView):
+#     permission_classes = (AllowAny,)
+#     @swagger_auto_schema(tags=['Health'], operation_description="Health", operation_summary="Health is Running", request_body=HealthSerializer)
+#     @transaction.atomic
+#     def post(self,request):
+#         test = request.data.get('test')
+#         logger.info(f"test is {test}")
+
+#         response = {}
+#         http_status = None
+#         try:
+#             serializer = HealthSerializer(data=request.data, context={'request': request})
+#             if serializer.is_valid():
+#                 logger.info("=================")
+                
+#                 response = {'message': 'Health Is Running Successfully'}
+#                     # Token = {}
+#                 return Response(response,status=http_status)
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as exp:
+#             logger.exception("User Create Exception : %s", exp)
+#             response['errors'] = "Server Error"
+#             http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+#             return Response(
+#                 response,
+#                 status=http_status
+#   
+from drf_yasg import openapi          
 class Health(APIView):
     permission_classes = (AllowAny,)
-    @swagger_auto_schema(tags=['Health'], operation_description="Health", operation_summary="Health is Running", request_body=HealthSerializer)
+    
+    @swagger_auto_schema(
+        tags=['Health'],
+        operation_description="Health",
+        operation_summary="Health is Running",
+        request_body=HealthSerializer,
+        manual_parameters=[
+        openapi.Parameter(
+            'Authorization', 
+            in_=openapi.IN_HEADER, 
+            description='Bearer token',
+            type=openapi.TYPE_STRING, 
+            required=True
+        ),
+    ]
+    )
     @transaction.atomic
-    def post(self,request):
+    def post(self, request):
         test = request.data.get('test')
+        logger.info(f"Received 'test' value: {test}")
 
         response = {}
-        http_status = None
+        http_status = status.HTTP_200_OK
         try:
             serializer = HealthSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
-                logger.info("=================")
-                
+                logger.info("Serializer is valid.")
                 response = {'message': 'Health Is Running Successfully'}
-                    # Token = {}
-                return Response(response,status=http_status)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                logger.info(f"Serializer errors: {serializer.errors}")
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
         except Exception as exp:
-            logger.exception("User Create Exception : %s", exp)
+            logger.exception("Exception in Health API: %s", exp)
             response['errors'] = "Server Error"
             http_status = status.HTTP_500_INTERNAL_SERVER_ERROR
-            return Response(
-                response,
-                status=http_status
-            )
+        
+        return Response(response, status=http_status)
+
 
 ''' Error Serializers [need to improve] '''
 def serializer_error_format(error):
@@ -282,3 +325,35 @@ def serializer_error_format(error):
     elif error.get('user_type'):
         error_message = error['user_type'][0]
     return error_message
+
+###  ##
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+import logging
+
+logger = logging.getLogger(__name__)
+@api_view(['GET'])
+@swagger_auto_schema(
+    tags=['GETHealth'],
+    operation_description="GETHealth Check API",
+    operation_summary="GETHealth Check with Token Authentication",
+    manual_parameters=[
+        openapi.Parameter(
+            'Authorization', 
+            in_=openapi.IN_HEADER, 
+            description='Bearer token',
+            type=openapi.TYPE_STRING, 
+            required=True
+        ),
+    ],
+)
+
+def getApiHealth(request):
+    logger.info("< =================== WTL IN HOUSE Backend is Up & Running =================== >")
+    
+    output = {"Module": "WTLINHOUSE", "condition": "OK"}
+
+    logger.info("< =================== Health Check Response Complete =================== >")
+    return Response(output)

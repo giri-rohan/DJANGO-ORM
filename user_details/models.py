@@ -73,7 +73,7 @@ class UserToken(models.Model):
     token_id = models.BigAutoField(primary_key=True)
     user_id = models.BigIntegerField(blank=False,null=True)
     user_type = models.IntegerField(blank=False,null=True)
-    token = models.CharField(max_length=255)
+    token = models.CharField(max_length=500)
     updated_on = models.DateTimeField(blank=False,null=True)
     expiry_time = models.DateTimeField(blank=False,null=True)
     allow_flag = models.IntegerField(default=1,blank=False,null=True)
