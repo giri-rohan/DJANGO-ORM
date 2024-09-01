@@ -349,7 +349,7 @@ logger = logging.getLogger(__name__)
         ),
     ],
 )
-
+ 
 def getApiHealth(request):
     logger.info("< =================== WTL IN HOUSE Backend is Up & Running =================== >")
     
