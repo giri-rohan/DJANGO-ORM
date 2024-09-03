@@ -355,5 +355,5 @@ def getApiHealth(request):
     
     output = {"Module": "WTLINHOUSE", "condition": "OK"}
 
-    logger.info("< =================== Health Check Response Complete =================== >")
+    logger.info("< =================== Health Check Response Complete ok =================== >")
     return Response(output)
