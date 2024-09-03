@@ -194,6 +194,7 @@ class LogInSerializer(serializers.Serializer):
         return {'user': email}
 
 class HealthSerializer(serializers.Serializer):
+    ''' HealthSerializer '''
     test = serializers.IntegerField(write_only=True)
     
 
