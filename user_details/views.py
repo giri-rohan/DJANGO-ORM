@@ -17,6 +17,7 @@ from email.message import EmailMessage
 from user_authentication.authMiddleware import AuthMiddleware
 from user_authentication.utils import generaterefreshtoken,generatenewtoken
 #new
+import hashlib
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 # Create your views here.
@@ -35,6 +36,11 @@ class CreateUser(APIView):
         logger.info("User Create Request Data : %s", request.data)
         request_data = request.data
         current_user = request.user
+        password = request_data['password']
+        # password = password.encode('UTF-8')
+        # password = hashlib.md5(password)
+        # password = password.hexdigest()
+        passwordMd5 = hashlib.md5(password.encode('UTF-8')).hexdigest()
         response = {}
         http_status = None
         try:
@@ -42,7 +48,7 @@ class CreateUser(APIView):
             if serializer.is_valid():
                 user_data = {
                     "phone_number": request_data['phone_number'],
-                    "password": request_data['password'],
+                    "password": passwordMd5,
                     "first_name": request_data['first_name'],
                     "last_name": request_data['last_name'],
                     "email": request_data['email'],
@@ -215,15 +221,17 @@ class LoginUser(APIView):
         user_otp = request.data.get('otp')
         email = request.data.get('email')
         password = request.data.get('password')
+        password_md5 = hashlib.md5(password.encode('UTF-8')).hexdigest()
         response = {}
         http_status = None
-        logger.info(f"password IS {password} mail is {email}")
+        logger.info(f"password IS {password_md5} mail is {email}")
         try:
             serializer = LogInSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 logger.info("=================")
                 user = User.objects.get(email=email)
-                if user.password == password:
+                logger.info(f"password = {user.password}")
+                if user.password == password_md5:
                     logger.info(f"password = {user.password}")
                     
                     token_response = generatenewtoken(user.id,user.user_type_id,user.first_name,user.last_name,user.email,user.phone_number)
@@ -232,7 +240,7 @@ class LoginUser(APIView):
                     response = {'message': 'Log In Successfully' ,'TOKEN' : token_response}
                     # Token = {}
                     return Response(response,status=http_status)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         except Exception as exp:
             logger.exception("User Create Exception : %s", exp)
             response['errors'] = "Server Error"
