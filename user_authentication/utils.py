@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from user_details.models import UserToken
 from django.conf import settings
 from django.utils import timezone  
+
 logger = logging.getLogger(__name__)
 
 ''' generaterefreshtoken func'''
@@ -137,4 +138,5 @@ def generatenewtoken(id, user_type, first_name, last_name, email, phone):
 exclusion_list = [
     '/swagger/',
     '/orm/user/login/',
+    '/orm/user/create/',
 ]
