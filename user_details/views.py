@@ -37,6 +37,8 @@ class CreateUser(APIView):
         request_data = request.data
         current_user = request.user
         password = request_data['password']
+        is_verified = request_data['is_verified']
+        
         # password = password.encode('UTF-8')
         # password = hashlib.md5(password)
         # password = password.hexdigest()
@@ -44,6 +46,13 @@ class CreateUser(APIView):
         response = {}
         http_status = None
         try:
+            if is_verified != True:
+                response["errors"] = "It's Not Verified"
+                http_status = status.HTTP_400_BAD_REQUEST
+            return Response(
+                    response,
+                    status=http_status
+                )
             serializer = SignUpSerializer(data=request_data)
             if serializer.is_valid():
                 user_data = {
@@ -359,9 +368,9 @@ logger = logging.getLogger(__name__)
 )
  
 def getApiHealth(request):
-    logger.info("< =================== WTL IN HOUSE Backend is Up & Running =================== >")
+    logger.info("< =================== DJANGO ORM Backend is Up & Running =================== >")
     
-    output = {"Module": "WTLINHOUSE", "condition": "OK"}
+    output = {"Module": "DJANGO ORM", "condition": "OK"}
 
     logger.info("< =================== Health Check Response Complete ok =================== >")
     return Response(output)
