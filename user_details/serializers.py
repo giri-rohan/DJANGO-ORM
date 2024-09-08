@@ -119,6 +119,7 @@ class SignUpSerializer(serializers.Serializer):
     phone_number = serializers.CharField(
         max_length=150, min_length=8, allow_blank=False)
     user_type = serializers.IntegerField()
+    is_verified = serializers.BooleanField()
 
 
     def validate(self, data):
@@ -132,10 +133,13 @@ class SignUpSerializer(serializers.Serializer):
 
         password = data.get('password')
 
+
         # Check if the passwords < 8
         if len(password) < 8:
             raise ValidationError("Passwords should be greater and equal 8 .")
-        return data    
+        return data   
+
+       
 
 class GenerateOtpSerializer(serializers.Serializer):
     u_email = serializers.EmailField()
