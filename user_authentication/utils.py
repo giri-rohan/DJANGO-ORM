@@ -139,4 +139,5 @@ exclusion_list = [
     '/swagger/',
     '/orm/user/login/',
     '/orm/user/create/',
+    'orm/user/generateotp/',
 ]
