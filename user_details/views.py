@@ -46,13 +46,13 @@ class CreateUser(APIView):
         response = {}
         http_status = None
         try:
-            if is_verified != True:
-                response["errors"] = "It's Not Verified"
-                http_status = status.HTTP_400_BAD_REQUEST
-            return Response(
-                    response,
-                    status=http_status
-                )
+            # if is_verified != True:
+            #     response["errors"] = "It's Not Verified"
+            #     http_status = status.HTTP_400_BAD_REQUEST
+            # return Response(
+            #         response,
+            #         status=http_status
+            #     )
             serializer = SignUpSerializer(data=request_data)
             if serializer.is_valid():
                 user_data = {
@@ -64,6 +64,8 @@ class CreateUser(APIView):
                     "user_type_id" : 1
                 }
                 user_instance = User.objects.create(**user_data)
+                response["message"] = "User Created Successfully"
+                http_status = status.HTTP_201_CREATED
                 logger.info("User Instance : %s", user_instance.id)
                 # user_details = {
                 #     "user": user_instance,
