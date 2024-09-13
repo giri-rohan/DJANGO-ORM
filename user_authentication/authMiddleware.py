@@ -20,6 +20,7 @@ from rest_framework.authentication import get_authorization_header
 from django.http import JsonResponse
 from user_details.models import UserToken
 from .utils import generaterefreshtoken, exclusion_list
+from django.urls import resolve
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ class AuthMiddleware(BaseBackend):
         logger.info(f"Initialized AuthMiddleware with get_response: {self.get_response}")
 
     def __call__(self, request):
+        
         auth_resp = self.auth(request)
         logger.info(f"Auth Response : {auth_resp}")
 
